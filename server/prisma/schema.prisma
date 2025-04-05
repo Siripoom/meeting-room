@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id       String     @id @unique @default(uuid())
+  name     String     @unique // เช่น ห้องประชุม A, ห้องประชุม B
+  status   RoomStatus @default(AVAILABLE) // สถานะห้อง
+  bookings Booking[] // การจองห้อง
+}
+
+model Booking {
+  id            String   @id @unique @default(uuid())
+  userId        String   @map("user_id")
+  roomId        String   @map("room_id") // เชื่อมกับห้องประชุม
+  startDateTime DateTime // เวลาเริ่มประชุม
+  endDateTime   DateTime // เวลาสิ้นสุดประชุม
+  status        Status   @default(PENDING) // สถานะการจอง
+  isCancelled   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Room          Room     @relation(fields: [roomId], references: [id])
+  User          User     @relation("BookingUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("bookings")
+}
+
+model User {
+  id        String    @id @unique @default(uuid())
+  fullName  String
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[] @relation("BookingUser")
+}
+
+enum Status {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RoomStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+}
+
+enum Role {
+  ADMIN
+  USER
+}
