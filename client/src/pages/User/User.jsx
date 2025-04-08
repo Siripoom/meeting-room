@@ -71,7 +71,7 @@ const User = () => {
     const value = e.target.value;
     setSearchText(value);
     const filteredData = users.filter((user) =>
-      user.name.toLowerCase().includes(value.toLowerCase())
+      user.fullName.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredUsers(filteredData);
   };
@@ -147,47 +147,23 @@ const User = () => {
 
   const columns = [
     {
-      title: "เลขบัตรประชาชน",
-      dataIndex: "citizen_id",
-      key: "citizen_id",
-      width: "20%",
-    },
-    {
       title: "ชื่อ",
       dataIndex: "fullName",
       key: "fullName",
       width: "20%",
     },
-    {
-      title: "เบอร์โทร",
-      dataIndex: "phone",
-      key: "phone",
-      width: "20%",
-    },
+
     {
       title: "ระดับผู้ใช้",
       dataIndex: "role",
       key: "role",
-      width: "15%",
+      width: "20%",
     },
-    {
-      title: "ประวัติการจอง",
-      key: "history",
-      width: "15%",
-      render: (text, record) => (
-        <Tooltip title="ดูประวัติ">
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewHistory(record)} // เปิด Modal ประวัติการจอง
-          />
-        </Tooltip>
-      ),
-    },
+
     {
       title: "การจัดการ",
       key: "actions",
-      width: "25%",
+      width: "10%",
       render: (text, record) => (
         <>
           <Tooltip title="แก้ไข">
@@ -298,24 +274,117 @@ const User = () => {
       {/* Modal สำหรับเพิ่มผู้ใช้ */}
       <Modal
         title="เพิ่มผู้ใช้"
-        open={isEditModalVisible}
+        open={isEditModalVisible && !editingUser}
         onCancel={handleCancel}
         footer={null}
       >
         <Form form={form} onFinish={handleAddUserSubmit} layout="vertical">
           {/* ฟอร์มสำหรับการเพิ่มผู้ใช้ */}
+          <Form.Item
+            name="fullName"
+            label="ชื่อเต็ม"
+            rules={[{ required: true, message: "กรุณากรอกชื่อเต็ม" }]}
+          >
+            <AntInput placeholder="ชื่อเต็ม" />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            label="รหัสผ่าน"
+            rules={[{ required: true, message: "กรุณากรอกรหัสผ่าน" }]}
+          >
+            <AntInput.Password placeholder="รหัสผ่าน" />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="อีเมล"
+            rules={[
+              { required: true, message: "กรุณากรอกอีเมล" },
+              { type: "email", message: "กรุณากรอกอีเมลให้ถูกต้อง" },
+            ]}
+          >
+            <AntInput placeholder="อีเมล" />
+          </Form.Item>
+
+          <Form.Item
+            name="role"
+            label="ระดับผู้ใช้"
+            rules={[{ required: true, message: "กรุณาเลือกระดับผู้ใช้" }]}
+          >
+            <Select
+              placeholder="เลือกระดับผู้ใช้"
+              options={[
+                { value: "ADMIN", label: "Admin" },
+                { value: "USER", label: "User" },
+              ]}
+            />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            className="rounded-lg py-3 text-white bg-green-600 hover:bg-green-700"
+          >
+            ยืนยันการเพิ่มผู้ใช้
+          </Button>
         </Form>
       </Modal>
 
       {/* Modal สำหรับแก้ไขข้อมูลผู้ใช้ */}
       <Modal
         title="แก้ไขข้อมูลผู้ใช้"
-        open={isEditModalVisible}
+        open={isEditModalVisible && editingUser}
         onCancel={handleCancel}
         footer={null}
       >
         <Form form={form} onFinish={handleEditSubmit} layout="vertical">
           {/* ฟอร์มสำหรับการแก้ไขผู้ใช้ */}
+          <Form.Item
+            name="fullName"
+            label="ชื่อเต็ม"
+            initialValue={editingUser?.fullName}
+            rules={[{ required: true, message: "กรุณากรอกชื่อเต็ม" }]}
+          >
+            <AntInput placeholder="ชื่อเต็ม" />
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="อีเมล"
+            initialValue={editingUser?.email}
+            rules={[
+              { required: true, message: "กรุณากรอกอีเมล" },
+              { type: "email", message: "กรุณากรอกอีเมลให้ถูกต้อง" },
+            ]}
+          >
+            <AntInput placeholder="อีเมล" />
+          </Form.Item>
+
+          <Form.Item
+            name="role"
+            label="ระดับผู้ใช้"
+            initialValue={editingUser?.role}
+            rules={[{ required: true, message: "กรุณาเลือกระดับผู้ใช้" }]}
+          >
+            <Select
+              placeholder="เลือกระดับผู้ใช้"
+              options={[
+                { value: "ADMIN", label: "Admin" },
+                { value: "USER", label: "User" },
+              ]}
+            />
+          </Form.Item>
+
+          <Button
+            type="primary"
+            htmlType="submit"
+            block
+            className="rounded-lg py-3 text-white bg-green-600 hover:bg-green-700"
+          >
+            ยืนยันการแก้ไข
+          </Button>
         </Form>
       </Modal>
     </Layout>

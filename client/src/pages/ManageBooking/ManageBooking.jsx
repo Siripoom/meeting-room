@@ -200,7 +200,7 @@ const ManageBooking = () => {
       render: (text) => dayjs(text).format("YYYY-MM-DD"),
     },
     {
-      title: "เวลาที่ให้ไปรับ",
+      title: "เวลาที่จอง",
       dataIndex: "pickupTime",
       key: "pickupTime",
       width: "10%",
@@ -351,7 +351,25 @@ const ManageBooking = () => {
               ))}
             </Select>
           </Form.Item>
-
+          {/* ฟอร์มสำหรับสถานะการจอง */}
+          <Form.Item
+            label="สถานะการจอง"
+            name="status"
+            rules={[{ required: true, message: "กรุณาเลือกสถานะการจอง" }]}
+          >
+            <Select
+              value={selectedBooking?.status}
+              onChange={(value) =>
+                setSelectedBooking((prev) => ({
+                  ...prev,
+                  status: value,
+                }))
+              }
+            >
+              <Select.Option value="PENDING">PENDING</Select.Option>
+              <Select.Option value="ASSIGNED">ASSIGNED</Select.Option>
+            </Select>
+          </Form.Item>
           {/* ฟอร์มสำหรับเวลาเริ่มประชุม */}
           <Form.Item
             label="เวลาเริ่มประชุม"

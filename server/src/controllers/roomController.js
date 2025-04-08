@@ -85,17 +85,10 @@ export const updateRoom = async (req, res) => {
 export const deleteRoom = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // ตรวจสอบว่ามีการจองห้องประชุมที่นี้หรือไม่
-    const bookings = await prisma.booking.findMany({
+    // Delete all bookings associated with this room
+    await prisma.booking.deleteMany({
       where: { roomId: id },
     });
-
-    if (bookings.length > 0) {
-      return res
-        .status(400)
-        .json({ message: "Cannot delete room, it has bookings associated" });
-    }
 
     const deletedRoom = await prisma.room.delete({
       where: { id },

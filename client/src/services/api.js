@@ -128,19 +128,22 @@ export const createBooking = async (bookingData) => {
 };
 // Function to update a booking
 export const updateBooking = async (bookingData) => {
-  console.log("Booking data:", bookingData);
   try {
-    //get body from bookingData
+    const { id, status } = bookingData;
+    console.log(id);
+    console.log(status);
 
-    const response = await api.put(
-      `/api/booking/${bookingData.id}`,
-      bookingData
-    );
+    // Send the status in the request body as a JSON object
+    const response = await api.put(`/api/booking/${id}`, {
+      status: status,
+    });
+
     return response.data;
   } catch (error) {
     throw error.response.data;
   }
 };
+
 // Function to delete a booking
 export const deleteBooking = async (bookingId) => {
   try {
