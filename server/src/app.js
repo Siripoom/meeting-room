@@ -24,7 +24,7 @@ app.get("/", async (req, res) => {
   try {
     // ทดสอบการเชื่อมต่อกับ DB
     await prisma.$connect();
-    res.json({ message: "Patient Transport API is running!" });
+    res.json({ message: "API is running!" });
   } catch (error) {
     res.status(500).json({ error: "Database connection failed" });
   }
